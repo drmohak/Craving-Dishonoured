@@ -5,32 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Craving Dishonoured</title>
     
-    <!-- NATIVE APP SETTINGS -->
+    <!-- Native App Settings -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="mobile-web-app-capable" content="yes">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1533/1533913.png">
     
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <style>
-        /* This prevents users from accidentally highlighting text or zooming while tapping fast */
         * { -webkit-tap-highlight-color: transparent; user-select: none; touch-action: manipulation; }
-        
         body {
             margin: 0; padding: 0; background-color: #0f172a; color: white;
-            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto;
+            font-family: -apple-system, system-ui, sans-serif;
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             height: 100vh; width: 100vw; overflow: hidden;
         }
-
-        .container {
-            display: flex; flex-direction: column; align-items: center; justify-content: space-around;
-            height: 80%; width: 90%;
-        }
-
+        .container { display: flex; flex-direction: column; align-items: center; justify-content: space-around; height: 80%; width: 90%; }
         h1 { color: #94a3b8; font-size: 1.2rem; letter-spacing: 2px; margin: 0; }
-
         .stats { display: flex; gap: 15px; width: 100%; }
         .stat-box { 
             background: #1e293b; padding: 20px 10px; border-radius: 20px; 
@@ -38,7 +29,6 @@
         }
         .value { display: block; font-size: 1.8rem; font-weight: 900; color: #22c55e; }
         .label { font-size: 0.65rem; color: #94a3b8; text-transform: uppercase; font-weight: bold; margin-top: 5px; }
-
         #dishonour-btn {
             background: linear-gradient(145deg, #ef4444, #b91c1c);
             color: white; border: none; width: 200px; height: 200px;
@@ -47,9 +37,8 @@
             transition: transform 0.1s; display: flex; align-items: center; justify-content: center;
             text-align: center; padding: 20px;
         }
-        #dishonour-btn:active { transform: scale(0.9); box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4); }
-
-        .footer { font-size: 0.8rem; color: #475569; font-style: italic; }
+        #dishonour-btn:active { transform: scale(0.9); }
+        .footer { font-size: 0.8rem; color: #475569; }
     </style>
 </head>
 <body>
@@ -70,10 +59,14 @@
 
         <button id="dishonour-btn">DISHONOUR<br>CRAVING</button>
 
-        <p class="footer">Stay Strong. Tap to Win.</p>
+        <p class="footer">Victory is the only option.</p>
     </div>
 
     <script>
+        // 1. PRE-LOAD THE SOUND
+        // Using a high-quality "Triumph/Success" sound
+        const victorySound = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
+
         let lifeCount = parseInt(localStorage.getItem('lifeAdded')) || 0;
         let moneyCount = parseInt(localStorage.getItem('moneySaved')) || 0;
 
@@ -84,19 +77,24 @@
         moneyEl.innerText = "₹" + moneyCount;
 
         document.getElementById('dishonour-btn').addEventListener('click', () => {
-            confetti({ particleCount: 100, spread: 60, origin: { y: 0.7 } });
+            // PLAY SOUND
+            victorySound.currentTime = 0; // Reset sound if tapped quickly
+            victorySound.play();
 
+            // CONFETTI
+            confetti({ particleCount: 120, spread: 70, origin: { y: 0.7 } });
+
+            // UPDATE DATA
             lifeCount += 7;
             moneyCount += 25;
-
             localStorage.setItem('lifeAdded', lifeCount);
             localStorage.setItem('moneySaved', moneyCount);
 
+            // UPDATE UI
             lifeEl.innerText = "+" + lifeCount;
             moneyEl.innerText = "₹" + moneyCount;
             
-            // Haptic Feedback (Vibrates phone on tap - works on Android)
-            if (navigator.vibrate) { navigator.vibrate(50); }
+            if (navigator.vibrate) { navigator.vibrate(70); }
         });
     </script>
 </body>
